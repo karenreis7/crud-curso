@@ -2,13 +2,8 @@
 import { Router } from 'express'; 
 import { userController } from './controller/user-controller';
 
-
 const router= Router();
+const baseUrl= '/user'; 
 
-
-const baseUrl= '/'; 
-
-
-router.get(`${baseUrl}/`, userController.read ); 
-
+router.post(`${baseUrl}`, userController.create);
 export const userRouter = router; 
