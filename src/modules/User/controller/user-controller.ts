@@ -24,7 +24,22 @@ class UserController {
                 error: err.errors
             }) 
         }
-        await userService.create(name, email, password)
+
+
+            try {
+                return res.json({
+                    message: 'Usuario criado com sucesso!',
+                    data: await userService.create(name, email, password)
+                })
+            } catch (err: any) {
+                return res.status(409).json({
+                    message: err.message
+                })
+            }
+
+
+
+        
     }
 }
 
