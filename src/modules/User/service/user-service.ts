@@ -11,18 +11,21 @@ class UserService {
       },
     });
 
-    if (findUser) {    // verifica se já existe um usuario
+    if (findUser) {
+      // verifica se já existe um usuario
       throw new Error('Dados já existente.');
     }
 
-    const create = await prismaConnect.user.create({  // faz a criação do usuario no banco
+    const create = await prismaConnect.user.create({
+      // faz a criação do usuario no banco
       data: {
         name,
         email,
         password: bcrypt.hashSync(password, 6),
       },
 
-      select: { // retorna apenas esses dados selecionados
+      select: {
+        // retorna apenas esses dados selecionados
         id: true,
         name: true,
         email: true,
@@ -31,7 +34,26 @@ class UserService {
 
     UtilsFileUser.createFolderUser(create.id); // criação da pasta do usuario
 
-    return create; // retorna no user-controller 
+    return create; // retorna no user-controller
+  }
+
+  public async read(paramsId: string) {
+    const findUser = await prismaConnect.user.findUnique({
+      where: {
+        id: paramsId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    if(!findUser){
+      throw new Error('Dados não encontrados!');
+    }
+
+    return findUser;
   }
 }
 

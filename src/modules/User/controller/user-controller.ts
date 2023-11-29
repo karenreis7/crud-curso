@@ -7,6 +7,8 @@ import { userService } from "../service/user-service";
 
 
 class UserController {
+
+    // 
     public async create(req: Request, res: Response){
         const {name, email, password} = req.body; 
 
@@ -25,7 +27,6 @@ class UserController {
             }) 
         }
 
-
             try {
                 return res.json({
                     message: 'Usuario criado com sucesso!',
@@ -35,11 +36,34 @@ class UserController {
                 return res.status(409).json({
                     message: err.message
                 })
-            }
+            } 
+    }
 
 
+    public  async read(req: Request, res: Response){
+        const paramsId = req.params.id; 
 
-        
+        try {
+            const zUserSchema = z.string().min(30, { message: 'ID é obrigatório!'});
+            zUserSchema.parse(paramsId)
+        } catch (err: any) {
+            return res.status(400).json({ // codigo de dados invalidos
+                message: "Dados inválidos!", 
+                error: err.errors,
+            });   
+        }
+
+       try {
+        return res.json({
+            message: "usuario encontrado com sucesso!",
+            data:   await userService.read(paramsId),
+        }); 
+      
+       } catch (err: any) {
+        return res.status(404).json({
+            error: err.message,   
+        });
+       }
     }
 }
 
