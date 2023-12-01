@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prismaConnect } from 'prismaConn';
 import bcrypt from 'bcrypt';
+import { EStatusErrors } from 'enum/status-errors.enum';
 import { UtilsFileUser } from '../utils/utils-file';
 
 class UserService {
@@ -13,7 +14,7 @@ class UserService {
 
     if (findUser) {
       // verifica se já existe um usuario
-      throw new Error('Dados já existente.');
+      throw new Error(EStatusErrors.E409);
     }
 
     const create = await prismaConnect.user.create({
@@ -50,7 +51,7 @@ class UserService {
     });
 
     if (!findUser) {
-      throw new Error('Dados não encontrados!');
+      throw new Error(EStatusErrors.E409);
     }
 
     return findUser;
@@ -63,7 +64,7 @@ class UserService {
       },
     });
     if (!findUser) {
-      throw new Error('Dados não encontrados!');
+      throw new Error(EStatusErrors.E404);
     }
 
     const update = await prismaConnect.user.update({
@@ -79,6 +80,19 @@ class UserService {
         email: true,
       },
     });
+  }
+
+  public async delete(paramsId: string) {
+    try {
+      UtilsFileUser.deleteFolderUser(paramsId);
+      return await prismaConnect.user.delete({
+        where: {
+          id: paramsId,
+        },
+      });
+    } catch (err: any) {
+      throw new Error(EStatusErrors.E404);
+    }
   }
 }
 export const userService = new UserService();

@@ -15,4 +15,14 @@ export class UtilsFileUser {
       fs.mkdirSync(path.resolve(...this._userPath, userId));
     }
   }
+
+  public static deleteFolderUser(userId: string) {
+    if (this._validateFolder(userId)) {
+      return fs.rmSync(path.resolve(...this._userPath, userId), {
+        recursive: true,
+      });
+    }
+
+    throw new Error();
+  }
 }
