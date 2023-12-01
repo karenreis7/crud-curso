@@ -49,12 +49,36 @@ class UserService {
       },
     });
 
-    if(!findUser){
+    if (!findUser) {
       throw new Error('Dados não encontrados!');
     }
 
     return findUser;
   }
-}
 
+  public async update(paramsId: string, name: string) {
+    const findUser = await prismaConnect.user.findUnique({
+      where: {
+        id: paramsId,
+      },
+    });
+    if (!findUser) {
+      throw new Error('Dados não encontrados!');
+    }
+
+    const update = await prismaConnect.user.update({
+      where: {
+        id: paramsId,
+      },
+      data: {
+        name,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+  }
+}
 export const userService = new UserService();
